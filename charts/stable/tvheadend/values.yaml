@@ -7,9 +7,9 @@
 
 image:
   # -- image repository
-  repository: ghcr.io/linuxserver/tvheadend
+  repository: ghcr.io/tvheadend/tvheadend
   # -- image tag
-  tag: version-eb59284b
+  tag: "latest@sha256:51afe3dc68b2426c85ca3713d38e31b651537d1f119d5e660348dbc76e435054"
   # -- image pull policy
   pullPolicy: IfNotPresent
 
@@ -18,10 +18,12 @@ image:
 env:
   # -- Set the container timezone
   TZ: UTC
-  # -- Specify the user ID the application will run as
-  PUID: "1001"
-  # -- Specify the group ID the application will run as
-  PGID: "1001"
+
+# Use this for the first run, remove after setting password
+# args: ["--config", "/var/lib/tvheadend", "--noacl"]
+
+args: ["--config", "/var/lib/tvheadend"]
+
 
 # -- Configures service settings for the chart.
 # @default -- See values.yaml
@@ -31,7 +33,7 @@ service:
       http:
         port: 9981
       htsp:
-        enabled: false
+        enabled: true
         protocol: TCP
         port: 9982
 
@@ -46,7 +48,36 @@ ingress:
 persistence:
   config:
     enabled: false
-    mountPath: /config
+    mountPath: /var/lib/tvheadend
   recordings:
     enabled: false
-    mountPath: /recordings
+    mountPath: /var/lib/tvheadend/recordings
+
+probes:
+  startup:
+    enabled: true
+    custom: true
+    spec:
+      httpGet:
+        path: /ping
+        port: http
+      periodSeconds: 5
+      failureThreshold: 24
+  readiness:
+    enabled: true
+    custom: true
+    spec:
+      httpGet:
+        path: /ping
+        port: http
+      periodSeconds: 10
+      failureThreshold: 3
+  liveness:
+    enabled: true
+    custom: true
+    spec:
+      httpGet:
+        path: /ping
+        port: http
+      periodSeconds: 20
+      failureThreshold: 3

@@ -2,7 +2,7 @@ apiVersion: v2
 appVersion: version-eb59284b
 description: TVheadend - a TV streaming server and digital video recorder
 name: tvheadend
-version: 5.4.2
+version: 6.0.0
 kubeVersion: ">=1.16.0-0"
 keywords:
   - tv
@@ -18,8 +18,8 @@ maintainers:
     email: me@bjw-s.dev
 dependencies:
   - name: common
-    repository: https://library-charts.k8s-at-home.com
-    version: 4.5.2
+    repository: https://k8s-home-lab.github.io/helm-charts/
+    version: 4.5.5
 annotations:
   artifacthub.io/changes: |-
     - kind: changed
